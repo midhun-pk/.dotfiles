@@ -64,7 +64,7 @@ return {
     end,
   },
   {
-    -- Rename variable
+    -- Rename variables
     'smjonas/inc-rename.nvim',
     dependencies = {
       'stevearc/dressing.nvim',
