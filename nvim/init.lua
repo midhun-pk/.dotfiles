@@ -39,5 +39,6 @@ require('lazy').setup({
   require('plugins.misc'),
   require('plugins.trouble'),
   require('plugins.obsidian'),
+  require('plugins.greeter'),
 })
 
