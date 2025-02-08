@@ -1,6 +1,9 @@
 require 'core.options'
 require 'core.keymaps'
 
+-- put this in your main init.lua file ( before lazy setup )
+vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46_cache/"
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -26,9 +29,7 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   require('plugins.neo-tree'),
-  require('plugins.color-theme'),
   require('plugins.bufferline'),
-  require('plugins.lualine'),
   require('plugins.treesitter'),
   require('plugins.telescope'),
   require('plugins.lsp'),
@@ -41,4 +42,10 @@ require('lazy').setup({
   require('plugins.obsidian'),
   require('plugins.greeter'),
 })
+
+-- (method 1, For heavy lazyloaders)
+dofile(vim.g.base46_cache .. "defaults")
+dofile(vim.g.base46_cache .. "statusline")
+dofile(vim.g.base46_cache .. "syntax")
+dofile(vim.g.base46_cache .. "treesitter")
 
