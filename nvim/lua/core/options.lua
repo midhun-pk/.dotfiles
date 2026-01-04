@@ -41,4 +41,5 @@ vim.opt.shortmess:append 'c' -- don't give |ins-completion-menu| messages
 vim.opt.iskeyword:append '-' -- hyphenated words recognized by searches
 vim.opt.formatoptions:remove { 'c', 'r', 'o' } -- don't insert the current comment leader automatically for auto-wrapping comments using 'textwidth', hitting <Enter> in insert mode, or hitting 'o' or 'O' in normal mode.
 vim.opt.runtimepath:remove '/usr/share/vim/vimfiles' -- separate vim plugins from neovim in case vim still in use
-vim.opt.colorcolumn = "120" -- highlight 120th column
+vim.opt.statusline = "%=%l:%c|%L   %p%% " -- update status line to show only the cursor info on the right side
+vim.opt.fillchars = { eob = ' ' } -- update end of buffer character to blank space instead of '~'

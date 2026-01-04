@@ -27,20 +27,33 @@ vim.opt.rtp:prepend(lazypath)
 --    :Lazy update
 --
 -- NOTE: Here is where you install your plugins.
-require('lazy').setup({
-  require('plugins.neo-tree'),
-  require('plugins.bufferline'),
-  require('plugins.treesitter'),
-  require('plugins.telescope'),
-  require('plugins.lsp'),
-  require('plugins.autocompletion'),
-  require('plugins.gitsigns'),
-  require('plugins.indent-blankline'),
-  require('plugins.comment'),
-  require('plugins.misc'),
-  require('plugins.trouble'),
-  require('plugins.obsidian'),
-  require('plugins.greeter'),
+require('lazy').setup({ import = 'plugins' }, {
+  install = {
+    missing = true,
+    colorscheme = { 'habamax' }
+  },
+  checker = {
+    enabled = true,
+    notify = false,
+  },
+  change_detection = {
+    enabled = true,
+    notify = false,
+  },
+  ui = {
+    -- border = "rounded"
+  },
+  performance = {
+    rtp = {
+      disabled_plugins = {
+        'gzip',
+        'tarPlugin',
+        'tohtml',
+        'tutor',
+        'zipPlugin',
+      },
+    },
+  },
 })
 
 -- (method 1, For heavy lazyloaders)

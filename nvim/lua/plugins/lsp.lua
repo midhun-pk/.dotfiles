@@ -1,22 +1,23 @@
 return { -- LSP Configuration & Plugins
   'neovim/nvim-lspconfig',
   dependencies = {
-    -- Automatically install LSPs and related tools to stdpath for neovim
-    'williamboman/mason.nvim',
-    'williamboman/mason-lspconfig.nvim',
+    -- Automatically install LSPs and related tools to stdpath for Neovim
+    { 'mason-org/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
+    -- mason-lspconfig:
+    -- - Bridges the gap between LSP config names (e.g. "lua_ls") and actual Mason package names (e.g. "lua-language-server").
+    -- - Used here only to allow specifying language servers by their LSP name (like "lua_ls") in `ensure_installed`.
+    -- - It does not auto-configure servers — we use vim.lsp.config() + vim.lsp.enable() explicitly for full control.
+    'mason-org/mason-lspconfig.nvim',
+    -- mason-tool-installer:
+    -- - Installs LSPs, linters, formatters, etc. by their Mason package name.
+    -- - We use it to ensure all desired tools are present.
+    -- - The `ensure_installed` list works with mason-lspconfig to resolve LSP names like "lua_ls".
     'WhoIsSethDaniel/mason-tool-installer.nvim',
 
     -- Useful status updates for LSP.
-    -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
     {
       'j-hui/fidget.nvim',
-      tag = 'v1.4.0',
       opts = {
-        progress = {
-          display = {
-            done_icon = '✓', -- Icon shown when all LSP progress tasks are complete
-          },
-        },
         notification = {
           window = {
             winblend = 0, -- Background color opacity in the notification window
@@ -25,6 +26,7 @@ return { -- LSP Configuration & Plugins
       },
     },
 
+    -- Allows extra capabilities provided by nvim-cmp
     'hrsh7th/cmp-nvim-lsp',
   },
   config = function()
@@ -111,7 +113,7 @@ return { -- LSP Configuration & Plugins
     local servers = {
       html = { filetypes = { 'html', 'twig', 'hbs' } },
       -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-      ts_ls = {},
+      vtsls = {},
       lua_ls = {
         -- cmd = {...},
         -- filetypes { ...},
@@ -134,7 +136,7 @@ return { -- LSP Configuration & Plugins
               callSnippet = 'Replace',
             },
             telemetry = { enable = false },
-            diagnostics = { disable = { 'missing-fields' } },
+            diagnostics = { globals = { 'vim' }, disable = { 'missing-fields' } },
           },
         },
       },
@@ -172,34 +174,6 @@ return { -- LSP Configuration & Plugins
       --     },
       --   },
       -- },
-      ruff = {
-        -- Notes on code actions: https://github.com/astral-sh/ruff-lsp/issues/119#issuecomment-1595628355
-        -- Get isort like behavior: https://github.com/astral-sh/ruff/issues/8926#issuecomment-1834048218
-        commands = {
-          RuffAutofix = {
-            function()
-              vim.lsp.buf.execute_command {
-                command = 'ruff.applyAutofix',
-                arguments = {
-                  { uri = vim.uri_from_bufnr(0) },
-                },
-              }
-            end,
-            description = 'Ruff: Fix all auto-fixable problems',
-          },
-          RuffOrganizeImports = {
-            function()
-              vim.lsp.buf.execute_command {
-                command = 'ruff.applyOrganizeImports',
-                arguments = {
-                  { uri = vim.uri_from_bufnr(0) },
-                },
-              }
-            end,
-            description = 'Ruff: Format imports',
-          },
-        },
-      },
       rust_analyzer = {
         ['rust-analyzer'] = {
           cargo = {
@@ -211,41 +185,26 @@ return { -- LSP Configuration & Plugins
           },
         },
       },
-      tailwindcss = {},
       jsonls = {},
       sqlls = {},
-      terraformls = {},
       yamlls = {},
       bashls = {},
-      graphql = {},
       cssls = {},
-      ltex = {},
-      texlab = {},
       eslint = {},
+      biome = {},
+      taplo = {}, -- toml files
     }
-
-    -- Ensure the servers and tools above are installed
-    require('mason').setup()
 
     -- You can add other tools here that you want Mason to install
     -- for you, so that they are available from within Neovim.
     local ensure_installed = vim.tbl_keys(servers or {})
-    vim.list_extend(ensure_installed, {
-      'stylua', -- Used to format lua code
-    })
+
     require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-    require('mason-lspconfig').setup {
-      handlers = {
-        function(server_name)
-          local server = servers[server_name] or {}
-          -- This handles overriding only values explicitly passed
-          -- by the server configuration above. Useful when disabling
-          -- certain features of an LSP (for example, turning off formatting for tsserver)
-          server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-          require('lspconfig')[server_name].setup(server)
-        end,
-      },
-    }
+    for server, cfg in pairs(servers) do
+      cfg.capabilities = vim.tbl_deep_extend('force', {}, capabilities, cfg.capabilities or {})
+      vim.lsp.config(server, cfg)
+      vim.lsp.enable(server)
+    end
   end,
 }

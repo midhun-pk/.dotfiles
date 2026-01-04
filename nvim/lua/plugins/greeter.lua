@@ -18,6 +18,12 @@ return {
       [[ ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝ ]],
       [[                                                    ]],
     }
+    dashboard.section.buttons.val = {
+      dashboard.button("e", "  New Buffer"),
+      dashboard.button("Space + fr", "  File Explorer"),
+      dashboard.button("Space + sf", "  Find File"),
+      dashboard.button("Space + sg", "  Find Word"),
+    }
 
     alpha.setup(dashboard.opts)
   end,
