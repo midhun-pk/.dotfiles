@@ -5,6 +5,9 @@ return {
   ui = {
     statusline = {
       theme = 'minimal',
+      modules = {
+        git = '',
+      }
     }
   }
 }
