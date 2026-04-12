@@ -1,0 +1,5 @@
+require 'core.options'
+require 'core.keymaps'
+require 'core.status-line'
+require 'core.auto-commands'
+require 'core.floating-terminal'

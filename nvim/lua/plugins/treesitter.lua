@@ -1,62 +1,61 @@
-return { -- Highlight, edit, and navigate code
-  'nvim-treesitter/nvim-treesitter',
-  branch = 'main',
-  build = ':TSUpdate',
-  main = 'nvim-treesitter', -- Sets main module to use for opts
-  -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-  init = function()
-    local ensureInstalled = {
-      'lua',
-      'python',
-      'javascript',
-      'typescript',
-      'vimdoc',
-      'vim',
-      'regex',
-      'terraform',
-      'sql',
-      'dockerfile',
-      'toml',
-      'json',
-      'java',
-      'groovy',
-      'go',
-      'gitignore',
-      'graphql',
-      'yaml',
-      'make',
-      'cmake',
-      'markdown',
-      'markdown_inline',
-      'bash',
-      'tsx',
-      'css',
-      'html',
-      -- ... your parsers
-    }
+-- Additional requirement: Install tree-sitter-cli using homebrew or npm
 
-    -- Autoinstall languages that are not installed
-    local alreadyInstalled = require('nvim-treesitter.config').get_installed()
-    local parsersToInstall = vim.iter(ensureInstalled)
-      :filter(function(parser)
-        return not vim.tbl_contains(alreadyInstalled, parser)
-      end)
-      :totable()
-    require('nvim-treesitter').install(parsersToInstall)
+vim.pack.add({
+  {
+    src = "https://github.com/nvim-treesitter/nvim-treesitter",
+    branch = "main",
+    build = ":TSUpdate",
+  },
+})
 
-    vim.api.nvim_create_autocmd('FileType', {
-      callback = function()
-        -- Enable treesitter highlighting and disable regex syntax
-        pcall(vim.treesitter.start)
-        -- Enable treesitter-based indentation
-        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-      end,
-    })
-  end,
-  -- There are additional nvim-treesitter modules that you can use to interact
-  -- with nvim-treesitter. You should go explore a few and see what interests you:
-  --
-  --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-  --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-  --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
-}
+local setup_treesitter = function()
+  local ensureInstalled = {
+    'lua',
+    'python',
+    'javascript',
+    'typescript',
+    'vimdoc',
+    'vim',
+    'regex',
+    'terraform',
+    'sql',
+    'dockerfile',
+    'toml',
+    'json',
+    'java',
+    'groovy',
+    'go',
+    'gitignore',
+    'graphql',
+    'yaml',
+    'make',
+    'cmake',
+    'markdown',
+    'markdown_inline',
+    'bash',
+    'tsx',
+    'css',
+    'html',
+    -- ... your parsers
+  }
+
+  -- Autoinstall languages that are not installed
+  local alreadyInstalled = require('nvim-treesitter.config').get_installed()
+  local parsersToInstall = vim.iter(ensureInstalled)
+  :filter(function(parser)
+    return not vim.tbl_contains(alreadyInstalled, parser)
+  end)
+  :totable()
+  require('nvim-treesitter').install(parsersToInstall)
+
+  vim.api.nvim_create_autocmd('FileType', {
+    callback = function()
+      -- Enable treesitter highlighting and disable regex syntax
+      pcall(vim.treesitter.start)
+      -- Enable treesitter-based indentation
+      vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+    end,
+  })
+end
+
+setup_treesitter()

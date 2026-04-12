@@ -1,45 +1,79 @@
-vim.o.hlsearch = false -- Set highlight on search
-vim.wo.number = true -- Make line numbers default
-vim.o.mouse = 'a' -- Enable mouse mode
-vim.o.clipboard = 'unnamedplus' -- Sync clipboard between OS and Neovim.
-vim.o.breakindent = true -- Enable break indent
-vim.o.undofile = true -- Save undo history
-vim.o.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in search
-vim.o.smartcase = true -- smart case
-vim.wo.signcolumn = 'yes' -- Keep signcolumn on by default
-vim.o.updatetime = 250 -- Decrease update time
-vim.o.timeoutlen = 300 -- time to wait for a mapped sequence to complete (in milliseconds)
-vim.o.backup = false -- creates a backup file
-vim.o.writebackup = false -- if a file is being edited by another program (or was written to file while editing with another program), it is not allowed to be edited
-vim.o.completeopt = 'menuone,noselect' -- Set completeopt to have a better completion experience
-vim.opt.termguicolors = true -- set termguicolors to enable highlight groups
-vim.o.whichwrap = 'bs<>[]hl' -- which "horizontal" keys are allowed to travel to prev/next line
-vim.o.wrap = false -- display lines as one long line
-vim.o.linebreak = true -- companion to wrap don't split words
-vim.o.scrolloff = 4 -- minimal number of screen lines to keep above and below the cursor
-vim.o.sidescrolloff = 8 -- minimal number of screen columns either side of cursor if wrap is `false`
-vim.o.relativenumber = true -- set relative numbered lines
-vim.o.numberwidth = 4 -- set number column width to 2 {default 4}
-vim.o.shiftwidth = 2 -- the number of spaces inserted for each indentation
-vim.o.tabstop = 2 -- insert n spaces for a tab
-vim.o.softtabstop = 2 -- Number of spaces that a tab counts for while performing editing operations
-vim.o.expandtab = true -- convert tabs to spaces
-vim.o.cursorline = false -- highlight the current line
-vim.o.splitbelow = true -- force all horizontal splits to go below current window
-vim.o.splitright = true -- force all vertical splits to go to the right of current window
-vim.o.swapfile = false -- creates a swapfile
-vim.o.smartindent = true -- make indenting smarter again
-vim.o.showmode = false -- we don't need to see things like -- INSERT -- anymore
-vim.o.showtabline = 2 -- always show tabs
-vim.o.backspace = 'indent,eol,start' -- allow backspace on
-vim.o.pumheight = 10 -- pop up menu height
-vim.o.conceallevel = 0 -- so that `` is visible in markdown files
-vim.o.fileencoding = 'utf-8' -- the encoding written to a file
-vim.o.cmdheight = 1 -- more space in the neovim command line for displaying messages
-vim.o.autoindent = true -- copy indent from current line when starting new one
-vim.opt.shortmess:append 'c' -- don't give |ins-completion-menu| messages
-vim.opt.iskeyword:append '-' -- hyphenated words recognized by searches
-vim.opt.formatoptions:remove { 'c', 'r', 'o' } -- don't insert the current comment leader automatically for auto-wrapping comments using 'textwidth', hitting <Enter> in insert mode, or hitting 'o' or 'O' in normal mode.
-vim.opt.runtimepath:remove '/usr/share/vim/vimfiles' -- separate vim plugins from neovim in case vim still in use
-vim.opt.statusline = "%=%l:%c|%L   %p%% " -- update status line to show only the cursor info on the right side
-vim.opt.fillchars = { eob = ' ' } -- update end of buffer character to blank space instead of '~'
+vim.opt.termguicolors = true
+vim.opt.number = true -- line number
+vim.opt.relativenumber = true -- relative line numbers
+vim.opt.cursorline = false -- highlight current line
+vim.opt.wrap = false -- do not wrap lines by default
+vim.opt.scrolloff = 10 -- keep 10 lines above and below the cursor
+vim.opt.sidescrolloff = 10 -- keep 10 lines to left and right of cursor
+
+vim.opt.tabstop = 2 -- tab width
+vim.opt.shiftwidth = 2 -- indent width
+vim.opt.softtabstop = 2 -- how many columns the cursor moves when you press <Tab> or <Backspace>
+vim.opt.expandtab = true -- use spaces instead of tab
+vim.opt.smartindent = true -- smart auto-indent
+vim.opt.autoindent = true -- copy indent from current line
+
+vim.opt.ignorecase = true -- case insensitive search
+vim.opt.smartcase = true -- case sensitive if uppercase letter is persent in search string
+vim.opt.hlsearch = true -- highligh search matches
+vim.opt.incsearch = true -- show matches as you type
+
+vim.opt.signcolumn = "yes" -- always show a column for sign
+-- vim.opt.colorcolumn = "101" -- show a column after 100 characters
+vim.opt.showmatch = true -- highlights matching brackets
+vim.opt.cmdheight = 1 -- single line command line
+vim.opt.completeopt = "menuone,noinsert,noselect" -- completion options
+vim.opt.showmode = false -- do not show the mode, instead have it in statusline
+vim.opt.laststatus = 3 -- Keeps a single global status line
+vim.opt.pumheight = 10 -- popup menu height
+vim.opt.pumblend = 10 -- popup menu transparency
+vim.opt.winblend = 0 -- floating window transparency
+vim.opt.conceallevel = 0 -- do not hide markup
+vim.opt.concealcursor = "" -- do not hide cursorline in markup
+vim.opt.synmaxcol = 300 -- syntax highlighting limit
+vim.opt.fillchars = { eob = " " } -- hide "~" on empty lines
+
+local undodir = vim.fn.expand("~/.vim/undodir")
+if
+	vim.fn.isdirectory(undodir) == 0 -- create undodir if nonexistent
+then
+	vim.fn.mkdir(undodir, "p")
+end
+
+vim.opt.backup = false -- do not create a backup file
+vim.opt.writebackup = false -- do not write to a backup file
+vim.opt.swapfile = false -- do not create a swapfile
+vim.opt.undofile = true -- do create an undo file
+vim.opt.undodir = undodir -- set the undo directory
+vim.opt.updatetime = 300 -- faster completion
+vim.opt.timeoutlen = 500 -- timeout duration
+vim.opt.ttimeoutlen = 50 -- key code timeout
+vim.opt.autoread = true -- auto-reload changes if outside of neovim
+vim.opt.autowrite = false -- do not auto-save
+
+vim.opt.hidden = true -- allow hidden buffers
+vim.opt.errorbells = false -- no error sounds
+vim.opt.backspace = "indent,eol,start" -- better backspace behaviour
+vim.opt.autochdir = false -- do not autochange directories
+vim.opt.iskeyword:append("-") -- include - in words
+vim.opt.path:append("**") -- include subdirs in search
+vim.opt.selection = "inclusive" -- include last char in selection
+vim.opt.mouse = "a" -- enable mouse support
+vim.opt.clipboard:append("unnamedplus") -- use system clipboard
+vim.opt.modifiable = true -- allow buffer modifications
+vim.opt.encoding = "utf-8" -- set encoding
+
+-- Folding: requires treesitter available at runtime; safe fallback if not
+vim.opt.foldmethod = "expr" -- use expression for folding
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- use treesitter for folding
+vim.opt.foldlevel = 99 -- start with all folds open
+
+vim.opt.splitbelow = true -- horizontal splits go below
+vim.opt.splitright = true -- vertical splits go right
+
+vim.opt.wildmenu = true -- tab completion
+-- complete longest common match, full completion list, cycle through with Tab
+vim.opt.wildmode = "longest:full,full"
+vim.opt.diffopt:append("linematch:60") -- improve diff display
+vim.opt.redrawtime = 10000 -- increase neovim redraw tolerance
+vim.opt.maxmempattern = 20000 -- increase max memory
