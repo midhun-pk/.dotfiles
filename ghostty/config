@@ -1,12 +1,22 @@
-theme = kanagawa wave
-font-family = Berkeley Mono
-font-size = 19
+# Set custom font
+font-family = "Berkeley Mono"
 font-thicken = false
-adjust-cell-height = 35%
-background-blur-radius = 20
+
+# Set font size
+font-size = 14
+
+# Increase the cell height
+adjust-cell-height = 30%
+
+# Set custom theme
+theme = Kanagawa Wave
+
+# Hide the title bar. To display it again, either remove the line below or set its value to 'server'.
+# window-decoration = none
+gtk-titlebar = false
+
+# Hide mouse while typing
 mouse-hide-while-typing = true
-macos-titlebar-style = hidden
-cursor-style = block
-window-padding-balance = true
-window-padding-x = 0
-window-padding-y = 0
+
+window-height=1080
+window-width=1920
