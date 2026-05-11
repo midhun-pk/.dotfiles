@@ -79,21 +79,33 @@ local function lsp_on_attach(ev)
 	vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
 	vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
 
-	vim.keymap.set("n", "<leader>D", function()
-		vim.diagnostic.open_float({ scope = "line" })
-	end, opts)
-	vim.keymap.set("n", "<leader>d", function()
-		vim.diagnostic.open_float({ scope = "cursor" })
-	end, opts)
-	vim.keymap.set("n", "<leader>nd", function()
-		vim.diagnostic.jump({ count = 1 })
-	end, opts)
+  vim.keymap.set("n", "<leader>td", function()
+    vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+  end, { desc = "Toggle diagnostics" })
 
-	vim.keymap.set("n", "<leader>pd", function()
-		vim.diagnostic.jump({ count = -1 })
-	end, opts)
+  vim.keymap.set("n", "]d", function()
+    vim.diagnostic.jump({ count = 1, float = true })
+  end, { desc = "Next diagnostic + float" })
 
-	vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+  vim.keymap.set("n", "[d", function()
+    vim.diagnostic.jump({ count = -1, float = true })
+  end, { desc = "Prev diagnostic + float" })
+
+  vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+  vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
+  vim.keymap.set("n", "<leader>dw", function()
+    -- Find the diagnostic float and focus it
+    for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+      local config = vim.api.nvim_win_get_config(winid)
+      if config.relative ~= "" then
+        vim.api.nvim_set_current_win(winid)
+        return
+      end
+    end
+  end, { desc = "Jump into existing float" })
+
+  vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 
 	vim.keymap.set("n", "<leader>ld", function()
 		require("fzf-lua").lsp_definitions({ jump1 = true })
@@ -143,7 +155,41 @@ local capabilities = require("blink.cmp").get_lsp_capabilities()
 local servers = {
   html = { filetypes = { 'html', 'twig', 'hbs' } },
   -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-  vtsls = {},
+  vtsls = {
+    settings = {
+      typescript = {
+        tsserver = {
+          maxTsServerMemory = 4096,
+        },
+        preferences = {
+          includePackageJsonAutoImports = "off",
+        },
+      },
+      javascript = {
+        preferences = {
+          includePackageJsonAutoImports = "off",
+        },
+      },
+      vtsls = {
+        autoUseWorkspaceTsdk = true,
+        enableMoveToFileCodeAction = false,
+        experimental = {
+          completion = {
+            enableServerSideFuzzyMatch = true,
+            entriesLimit = 10,
+          },
+        },
+      },
+    },
+
+    on_attach = function(client, bufnr)
+      -- 🔥 BIG performance win
+      client.server_capabilities.semanticTokensProvider = nil
+
+      -- optional (recommended if using prettier/biome)
+      client.server_capabilities.documentFormattingProvider = false
+    end,
+  },
   lua_ls = {
     -- cmd = {...},
     -- filetypes { ...},
@@ -172,22 +218,6 @@ local servers = {
   },
   dockerls = {},
   docker_compose_language_service = {},
-  pylsp = {
-    settings = {
-      pylsp = {
-        plugins = {
-          pyflakes = { enabled = false },
-          pycodestyle = { enabled = false },
-          autopep8 = { enabled = false },
-          yapf = { enabled = false },
-          mccabe = { enabled = false },
-          pylsp_mypy = { enabled = false },
-          pylsp_black = { enabled = false },
-          pylsp_isort = { enabled = false },
-        },
-      },
-    },
-  },
   rust_analyzer = {
     ['rust-analyzer'] = {
       cargo = {
@@ -204,7 +234,12 @@ local servers = {
   yamlls = {},
   bashls = {},
   cssls = {},
-  eslint = {},
+  eslint = {
+    settings = {
+      run = "onSave",
+      workingDirectory = { mode = "location" },
+    },
+  },
   biome = {},
   taplo = {}, -- toml files
 }

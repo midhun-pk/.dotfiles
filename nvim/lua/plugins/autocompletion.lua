@@ -1,3 +1,6 @@
+-- For using rust implementation we have to run "cargo build --release"
+-- in directory ~/.local/share/nvim/site/pack/core/opt/blink.cmp/
+
 vim.pack.add({
   {
     src = "https://github.com/Saghen/blink.cmp",
@@ -16,7 +19,7 @@ require("blink.cmp").setup({
 		["<S-Tab>"] = { "snippet_backward", "fallback" },
 	},
 	appearance = { nerd_font_variant = "mono" },
-	completion = { menu = { auto_show = true } },
+	completion = { menu = { auto_show = true }, documentation = { auto_show = true } },
 	sources = { default = { "lsp", "path", "buffer" } },
 
 	fuzzy = {
